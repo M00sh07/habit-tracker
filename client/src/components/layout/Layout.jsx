@@ -1,12 +1,11 @@
-import React from 'react'
-import Header from './Header'
-import { Outlet } from 'react-router-dom'
-import { ToastContainer } from 'react-toastify';
-import { useEffect, useState } from 'react';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useEffect, useState } from "react";
+import Header from "./Header";
+import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ThemeToggle from "../ThemeToggle";
 
-function Layout({markHabitComplete}) {
-
+function Layout({ markHabitComplete }) {
   const [habits, setHabits] = useState(() => {
     const stored = localStorage.getItem("habits");
     return stored ? JSON.parse(stored) : [];
@@ -17,59 +16,64 @@ function Layout({markHabitComplete}) {
   }, [habits]);
 
   useEffect(() => {
-    resetStreakIfMissed()
-  }, [])
+    resetStreakIfMissed();
+  }, []);
 
   const resetStreakIfMissed = () => {
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+    const today = new Date();
 
-  habits.forEach(habit => {
-    if (!habit.lastCompleted) return; // never done, no streak yet
+    habits.forEach((habit) => {
+      if (!habit.lastCompleted) return;
 
-    const lastDate = new Date(habit.lastCompleted);
+      const lastDate = new Date(habit.lastCompleted);
 
-    // Daily habit
-    if (habit.freq.mode === "daily") {
-      const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
-      if (diffDays > 1) habit.currentStreak = 0; // missed at least 1 day
-    }
+      if (habit.freq.mode === "daily") {
+        const diffDays = Math.floor(
+          (today - lastDate) / (1000 * 60 * 60 * 24)
+        );
+        if (diffDays > 1) habit.currentStreak = 0;
+      } else if (habit.freq.mode === "weekly") {
+        const diffDays = Math.floor(
+          (today - lastDate) / (1000 * 60 * 60 * 24)
+        );
+        if (diffDays > 7) habit.currentStreak = 0;
+      } else if (habit.freq.mode === "custom") {
+        const scheduledDays = habit.freq.days;
+        let tempDate = new Date(lastDate);
 
-    // Weekly habit (once a week)
-    else if (habit.freq.mode === "weekly") {
-      const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
-      if (diffDays > 7) habit.currentStreak = 0; // missed a week
-    }
+        while (tempDate < today) {
+          tempDate.setDate(tempDate.getDate() + 1);
+          const day = tempDate.getDay();
+          const tempStr = tempDate.toISOString().split("T")[0];
 
-    // Custom habit (e.g., 2 days/week)
-    else if (habit.freq.mode === "custom") {
-      const scheduledDays = habit.freq.days; // array of weekday numbers [0-6]
-      let tempDate = new Date(lastDate);
-
-      while (tempDate < today) {
-        tempDate.setDate(tempDate.getDate() + 1);
-        const day = tempDate.getDay();
-        const tempStr = tempDate.toISOString().split("T")[0];
-
-        if (scheduledDays.includes(day) && !habit.progress.includes(tempStr)) {
-          habit.currentStreak = 0;
-          break; // missed a scheduled day
+          if (
+            scheduledDays.includes(day) &&
+            !habit.progress.includes(tempStr)
+          ) {
+            habit.currentStreak = 0;
+            break;
+          }
         }
       }
-    }
-  });
+    });
   };
 
-  
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--bg)", color: "var(--text)" }}
+    >
+      {/* 🌙 THEME TOGGLE (TOP-RIGHT) */}
+      <ThemeToggle />
+
+      <Header />
+
       <main className="p-6">
         <ToastContainer position="top-right" autoClose={2000} />
-        <Outlet context={{habits, setHabits, markHabitComplete}}/> 
+        <Outlet context={{ habits, setHabits, markHabitComplete }} />
       </main>
     </div>
-  )
+  );
 }
 
-export default Layout
+export default Layout;

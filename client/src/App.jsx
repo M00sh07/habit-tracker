@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import './App.css'
 import Dashboard from './pages/Dashboard'
+import ThemeToggle from "./components/ThemeToggle"
 
 function App() {
   return (

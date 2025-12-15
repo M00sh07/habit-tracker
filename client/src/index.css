@@ -63,3 +63,47 @@ html, body, #root {
   color: white !important;
   border-radius: 50% !important;
 }
+
+
+:root {
+  --bg: #ffffff;
+  --text: #111827;
+  --card: #f3f4f6;
+  --accent: #4f46e5;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #e5e7eb;
+  --card: #1e293b;
+  --accent: #818cf8;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.card {
+  background: var(--card);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  background: var(--accent);
+  color: white;
+  z-index: 9999;
+}
+

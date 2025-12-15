@@ -1,31 +1,36 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Dashboard from './pages/Dashboard.jsx'
-import AddHabit from './pages/AddHabit.jsx'
-import Layout from './components/layout/Layout.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import "./index.css";
+import App from "./App";
+import { ThemeProvider } from "./theme/ThemeContext";
+
+import Layout from "./components/layout/Layout";
+import Dashboard from "./pages/Dashboard";
+import AddHabit from "./pages/AddHabit";
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Layout/>,
+    path: "/",
+    element: <Layout />,
     children: [
       {
         index: true,
-        element: <Dashboard/>
+        element: <Dashboard />,
       },
       {
-        path: 'addHabit',
-        element: <AddHabit/>
+        path: "addHabit",
+        element: <AddHabit />,
       },
-    ]
+    ],
   },
-])
+]);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}/>
-  </StrictMode>,
-)
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  </StrictMode>
+);
